@@ -121,6 +121,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
   bool _isRunning = false;
   bool _isBreak = false;
   int _pomodoroCount = 0;
+  bool _hasStarted = false; // New variable to track if a session has ever started
 
   late AnimationController _animationController;
   int _currentTotalDuration = 0;
@@ -132,6 +133,10 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
   final AudioPlayer _audioPlayer = AudioPlayer();
   final SystemTrayManager _systemTrayManager = SystemTrayManager();
 
+  List<String> _availableSounds = [];
+  String _selectedWorkSound = 'alarm1.mp3'; // Default
+  String _selectedBreakSound = 'bell.mp3'; // Default
+
   DateTime? _sessionStartTime;
   int? _currentSessionId; // To store the ID of the current session
 
@@ -140,6 +145,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
     super.initState();
     _remainingSeconds = _pomodoroDuration;
     _currentTotalDuration = _pomodoroDuration;
+    _availableSounds = ['alarm1.mp3', 'alarm2.mp3', 'bell.mp3', 'bell2.mp3', 'bell3.mp3', 'bell4.mp3', 'bright.mp3', 'bright2.mp3', 'bright3.mp3', 'ding.mp3', 'signall.mp3'];
     _loadSettings();
     _systemTrayManager.init(_startTimer, _pauseTimer, _resetTimer);
 
@@ -160,26 +166,33 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
         _timer?.cancel(); // Cancel the periodic timer if it's still running
         _isRunning = false;
         _updateSession('Completed'); // Update session on completion
-        _playSound();
+        if (_isBreak) { // If it was a break, now stop and reset
+          _playSound(false); // Break session completed
+          _notificationService.showNotification(
+            'Sesi Selesai',
+            'Sesi Pomodoro telah berakhir. Silakan mulai sesi baru.',
+          );
+          _resetTimer(isCompletedReset: true); // Reset UI and stop, indicating it's a completed reset
+        } else { // If it was a work session, transition to break
+          _playSound(true); // Work session completed
+          _isBreak = true; // Toggle to break
+          _pomodoroCount++; // Increment pomodoro count only when a work session completes
+          _currentTotalDuration = (_pomodoroCount % 4 == 0 ? _longBreakDuration : _shortBreakDuration);
 
-        _isBreak = !_isBreak; // Toggle between work and break
-        _pomodoroCount++; // Increment pomodoro count only when a work session completes
-        _currentTotalDuration = _isBreak
-            ? (_pomodoroCount % 4 == 0 ? _longBreakDuration : _shortBreakDuration)
-            : _pomodoroDuration;
+          _animationController!.duration = Duration(seconds: _currentTotalDuration);
+          _animationController!.reset();
 
-        _animationController!.duration = Duration(seconds: _currentTotalDuration);
-        _animationController!.reset();
+          _notificationService.showNotification(
+            'Waktu Istirahat',
+            (_pomodoroCount % 4 == 0 ? 'Waktunya istirahat panjang!' : 'Waktunya istirahat pendek!'),
+          );
 
-        _notificationService.showNotification(
-          _isBreak ? 'Waktu Istirahat' : 'Waktu Kerja',
-          _isBreak
-              ? (_pomodoroCount % 4 == 0 ? 'Waktunya istirahat panjang!' : 'Waktunya istirahat pendek!')
-              : 'Waktunya kembali fokus!',
-        );
-
-        // Automatically start the next phase
-        _startTimer();
+          // Automatically start the next phase (the break) without creating a new session
+          setState(() {
+            _isRunning = true; // Mark as running for the break
+          });
+          _animationController!.forward(); // Start the break timer animation
+        }
       }
     });
   }
@@ -190,6 +203,8 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
       _pomodoroDuration = (prefs.getInt('pomodoroDuration') ?? 25) * 60;
       _shortBreakDuration = (prefs.getInt('shortBreakDuration') ?? 5) * 60;
       _longBreakDuration = (prefs.getInt('longBreakDuration') ?? 15) * 60;
+      _selectedWorkSound = prefs.getString('workSound') ?? _availableSounds.first;
+      _selectedBreakSound = prefs.getString('breakSound') ?? _availableSounds.first;
 
       // Update _currentTotalDuration if settings change and timer is not running
       if (!_isRunning) {
@@ -209,19 +224,35 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
     setState(() {
       _isRunning = true;
       _sessionStartTime = DateTime.now(); // Record start time
+      _hasStarted = true; // Set to true when timer starts
     });
 
-    // Insert new session when timer starts
-    final newSession = {
-      'taskType': _taskTypeController.text.isEmpty ? 'N/A' : _taskTypeController.text,
-      'focusArea': _focusAreaController.text.isEmpty ? 'N/A' : _focusAreaController.text,
-      'durationSeconds': 0, // Will be updated later
-      'startTime': _sessionStartTime!.millisecondsSinceEpoch,
-      'endTime': 0, // Will be updated later
-      'status': 'Active',
-    };
-    _currentSessionId = await _dbHelper.insertPomodoroSession(newSession);
-    print('New session started with ID: $_currentSessionId'); // For debugging
+    // Insert new session when timer starts, only if it's a work session
+    if (!_isBreak) {
+      if (_currentSessionId == null) {
+        // This is a brand new work session
+        _sessionStartTime = DateTime.now(); // Record start time for new session
+        final newSession = {
+          'taskType': _taskTypeController.text.isEmpty ? 'N/A' : _taskTypeController.text,
+          'focusArea': _focusAreaController.text.isEmpty ? 'N/A' : _focusAreaController.text,
+          'durationSeconds': 0, // Will be updated later
+          'startTime': _sessionStartTime!.millisecondsSinceEpoch,
+          'endTime': 0, // Will be updated later
+          'status': 'Active',
+        };
+        _currentSessionId = await _dbHelper.insertPomodoroSession(newSession);
+        print('New session started with ID: $_currentSessionId'); // For debugging
+      } else {
+        // This is a resumed work session, update existing one
+        final updatedSessionData = {
+          'id': _currentSessionId,
+          'taskType': _taskTypeController.text.isEmpty ? 'N/A' : _taskTypeController.text,
+          'focusArea': _focusAreaController.text.isEmpty ? 'N/A' : _focusAreaController.text,
+        };
+        await _dbHelper.updatePomodoroSession(updatedSessionData);
+        print('Existing session $_currentSessionId updated with new task/focus.'); // For debugging
+      }
+    }
 
     _animationController!.forward(from: _animationController!.value);
   }
@@ -233,10 +264,10 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
     });
   }
 
-  void _resetTimer() {
+  void _resetTimer({bool isCompletedReset = false}) {
     _animationController.reset();
     _animationController.stop(); // Ensure it's stopped
-    if(_isRunning) {
+    if(_isRunning && !isCompletedReset) { // Only update to 'Reset' if not a completed reset
       _updateSession('Reset'); // Update session on reset
     }
     setState(() {
@@ -249,6 +280,22 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
       _sessionStartTime = null;
       _currentSessionId = null;
       _currentTotalDuration = _pomodoroDuration; // Reset total duration
+      _animationController?.duration = Duration(seconds: _currentTotalDuration);
+    });
+  }
+
+  void _stopBreak() {
+    _animationController.reset();
+    _animationController.stop();
+    setState(() {
+      _isRunning = false;
+      _isBreak = false;
+      _remainingSeconds = _pomodoroDuration;
+      _taskTypeController.clear();
+      _focusAreaController.clear();
+      _sessionStartTime = null;
+      _currentSessionId = null;
+      _currentTotalDuration = _pomodoroDuration;
       _animationController?.duration = Duration(seconds: _currentTotalDuration);
     });
   }
@@ -273,10 +320,12 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
     print('Session updated: $updatedSession'); // For debugging
   }
 
-  void _playSound() async {
-    // TODO: Ganti dengan path file suara Anda
-    // Pastikan Anda telah menambahkan file suara ke folder assets di pubspec.yaml
-    // await _audioPlayer.play(AssetSource('sounds/alarm.mp3'));
+  void _playSound(bool isWorkSessionCompleted) async {
+    if (isWorkSessionCompleted) {
+      await _audioPlayer.play(AssetSource('sounds/$_selectedWorkSound'));
+    } else {
+      await _audioPlayer.play(AssetSource('sounds/$_selectedBreakSound'));
+    }
   }
 
   String _formatTime(int seconds) {
@@ -319,7 +368,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsScreen(setThemeMode: widget.setThemeMode)),
+                MaterialPageRoute(builder: (context) => SettingsScreen(setThemeMode: widget.setThemeMode, availableSounds: _availableSounds)),
               ).then((_) => _loadSettings());
             },
           ),
@@ -361,66 +410,116 @@ class _PomodoroTimerState extends State<PomodoroTimer> with SingleTickerProvider
               const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                child: TextField(
-                  controller: _taskTypeController,
-                  decoration: InputDecoration(
-                    labelText: 'Jenis Pekerjaan',
-                    labelStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.7)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-                  ),
-                  style: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color),
-                  enabled: !_isRunning, // Disable input when timer is running
-                ),
+                child: _isBreak
+                    ? const SizedBox.shrink() // Hide during break
+                    : _isRunning
+                        ? Text(
+                            'Jenis Pekerjaan: ${_taskTypeController.text}',
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: Theme.of(context).textTheme.bodyMedium!.color,
+                                ),
+                          )
+                        : TextField(
+                            controller: _taskTypeController,
+                            decoration: InputDecoration(
+                              labelText: 'Jenis Pekerjaan',
+                              labelStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.7)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                            ),
+                            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color),
+                            enabled: !_isRunning, // Disable input when timer is running
+                          ),
               ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                child: TextField(
-                  controller: _focusAreaController,
-                  decoration: InputDecoration(
-                    labelText: 'Area Fokus',
-                    labelStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.7)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-                  ),
-                  style: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color),
-                  enabled: !_isRunning, // Disable input when timer is running
-                ),
+                child: _isBreak
+                    ? const SizedBox.shrink() // Hide during break
+                    : _isRunning
+                        ? Text(
+                            'Area Fokus: ${_focusAreaController.text}',
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: Theme.of(context).textTheme.bodyMedium!.color,
+                                ),
+                          )
+                        : TextField(
+                            controller: _focusAreaController,
+                            decoration: InputDecoration(
+                              labelText: 'Area Fokus',
+                              labelStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.7)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                            ),
+                            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color),
+                            enabled: !_isRunning, // Disable input when timer is running
+                          ),
               ),
               const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  Expanded(
-                  child: ElevatedButton(
-                    onPressed: _isRunning ? null : _startTimer,
-                    child: const Text('Start'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _isRunning ? _pauseTimer : null,
-                    child: const Text('Pause'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _resetTimer,
-                    child: const Text('Reset'),
-                  ),
-                ),
+                  if (_isBreak) // Show Stop button during break
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _stopBreak,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, // Transparent background
+                          elevation: 0, // No shadow
+                          padding: EdgeInsets.zero, // Remove padding
+                        ),
+                        child: Icon(Icons.stop, color: Theme.of(context).textTheme.bodyMedium!.color), // Stop icon
+                      ),
+                    )
+                  else if (!_hasStarted || (_hasStarted && !_isRunning)) // Show Start if not started or paused
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isRunning ? null : _startTimer,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, // Transparent background
+                          elevation: 0, // No shadow
+                          padding: EdgeInsets.zero, // Remove padding
+                        ),
+                        child: Icon(Icons.play_arrow, color: Theme.of(context).textTheme.bodyMedium!.color), // Play icon
+                      ),
+                    ),
+                  if (!_isBreak && _hasStarted && _isRunning) // Show Pause if started and running (not during break)
+                    const SizedBox(width: 10),
+                  if (!_isBreak && _hasStarted && _isRunning) // Show Pause if started and running (not during break)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isRunning ? _pauseTimer : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, // Transparent background
+                          elevation: 0, // No shadow
+                          padding: EdgeInsets.zero, // Remove padding
+                        ),
+                        child: Icon(Icons.pause, color: Theme.of(context).textTheme.bodyMedium!.color), // Pause icon
+                      ),
+                    ),
+                  if (!_isBreak && _hasStarted) // Show Reset if started (not during break)
+                    const SizedBox(width: 10),
+                  if (!_isBreak && _hasStarted) // Show Reset if started (not during break)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _resetTimer,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, // Transparent background
+                          elevation: 0, // No shadow
+                          padding: EdgeInsets.zero, // Remove padding
+                        ),
+                        child: Icon(Icons.refresh, color: Theme.of(context).textTheme.bodyMedium!.color), // Reset icon
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: 40),
