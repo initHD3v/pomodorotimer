@@ -64,101 +64,129 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pengaturan'),
+        title: const Text('Pengaturan', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blueGrey[900],
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _pomodoroController,
-                decoration: const InputDecoration(
-                  labelText: 'Durasi Pomodoro (menit)',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Harap masukkan durasi';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Harap masukkan angka yang valid';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _shortBreakController,
-                decoration: const InputDecoration(
-                  labelText: 'Istirahat Pendek (menit)',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Harap masukkan durasi';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Harap masukkan angka yang valid';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _longBreakController,
-                decoration: const InputDecoration(
-                  labelText: 'Istirahat Panjang (menit)',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Harap masukkan durasi';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Harap masukkan angka yang valid';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                title: const Text('Tema Aplikasi'),
-                trailing: DropdownButton<ThemeMode>(
-                  value: _selectedThemeMode,
-                  onChanged: (ThemeMode? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedThemeMode = newValue;
-                      });
+      body: Container(
+        color: Colors.blueGrey[900],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _pomodoroController,
+                  decoration: InputDecoration(
+                    labelText: 'Durasi Pomodoro (menit)',
+                    labelStyle: TextStyle(color: Colors.white70),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Harap masukkan durasi';
                     }
+                    if (int.tryParse(value) == null) {
+                      return 'Harap masukkan angka yang valid';
+                    }
+                    return null;
                   },
-                  items: const <DropdownMenuItem<ThemeMode>>[
-                    DropdownMenuItem<ThemeMode>(
-                      value: ThemeMode.system,
-                      child: Text('Sistem'),
-                    ),
-                    DropdownMenuItem<ThemeMode>(
-                      value: ThemeMode.light,
-                      child: Text('Terang'),
-                    ),
-                    DropdownMenuItem<ThemeMode>(
-                      value: ThemeMode.dark,
-                      child: Text('Gelap'),
-                    ),
-                  ],
                 ),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _saveSettings,
-                child: const Text('Simpan'),
-              ),
-            ],
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _shortBreakController,
+                  decoration: InputDecoration(
+                    labelText: 'Istirahat Pendek (menit)',
+                    labelStyle: TextStyle(color: Colors.white70),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Harap masukkan durasi';
+                    }
+                    if (int.tryParse(value) == null) {
+                      return 'Harap masukkan angka yang valid';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _longBreakController,
+                  decoration: InputDecoration(
+                    labelText: 'Istirahat Panjang (menit)',
+                    labelStyle: TextStyle(color: Colors.white70),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Harap masukkan durasi';
+                    }
+                    if (int.tryParse(value) == null) {
+                      return 'Harap masukkan angka yang valid';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  title: const Text('Tema Aplikasi', style: TextStyle(color: Colors.white)),
+                  trailing: DropdownButton<ThemeMode>(
+                    value: _selectedThemeMode,
+                    dropdownColor: Colors.blueGrey[800],
+                    iconEnabledColor: Colors.white,
+                    onChanged: (ThemeMode? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _selectedThemeMode = newValue;
+                        });
+                      }
+                    },
+                    items: <DropdownMenuItem<ThemeMode>>[
+                      DropdownMenuItem<ThemeMode>(
+                        value: ThemeMode.system,
+                        child: Text('Sistem', style: TextStyle(color: Colors.white)),
+                      ),
+                      DropdownMenuItem<ThemeMode>(
+                        value: ThemeMode.light,
+                        child: Text('Terang', style: TextStyle(color: Colors.white)),
+                      ),
+                      DropdownMenuItem<ThemeMode>(
+                        value: ThemeMode.dark,
+                        child: Text('Gelap', style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _saveSettings,
+                  child: const Text('Simpan'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

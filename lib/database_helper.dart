@@ -77,4 +77,28 @@ class DatabaseHelper {
       return []; // Return empty list on error
     }
   }
+
+  Future<int> deleteAllPomodoroSessions() async {
+    Database db = await _instance.database;
+    try {
+      return await db.delete('pomodoro_sessions');
+    } catch (e) {
+      print("Error deleting all sessions: $e");
+      return 0; // Indicate error
+    }
+  }
+
+  Future<int> deletePomodoroSession(int id) async {
+    Database db = await _instance.database;
+    try {
+      return await db.delete(
+        'pomodoro_sessions',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      print("Error deleting session: $e");
+      return 0; // Indicate error
+    }
+  }
 }
