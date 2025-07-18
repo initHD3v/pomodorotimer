@@ -1,16 +1,67 @@
-# pomodoro_timer
+# Pomodoro Timer
 
-A new Flutter project.
+Aplikasi Pomodoro Timer sederhana yang dibangun dengan Flutter. Aplikasi ini membantu Anda mengelola waktu kerja dan istirahat menggunakan teknik Pomodoro.
 
-## Getting Started
+## Fitur
 
-This project is a starting point for a Flutter application.
+*   **Timer Pomodoro:** Atur durasi kerja dan istirahat.
+*   **Notifikasi:** Dapatkan notifikasi saat sesi kerja atau istirahat berakhir.
+*   **Manajemen Sesi:** Catat riwayat sesi Pomodoro Anda.
+*   **Manajemen Riwayat:**
+    *   Lihat riwayat sesi yang telah selesai.
+    *   Hapus sesi individu dari riwayat.
+    *   Hapus semua riwayat sesi.
+*   **Dukungan Tema:** Mendukung tema terang dan gelap.
+*   **Input Tugas:** Catat jenis pekerjaan dan area fokus untuk setiap sesi.
 
-A few resources to get you started if this is your first Flutter project:
+## Instalasi
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Untuk menjalankan aplikasi ini, pastikan Anda telah menginstal Flutter SDK.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1.  **Clone repositori ini:**
+    ```bash
+    git clone https://github.com/initialh/pomodoro_timer.git
+    ```
+2.  **Masuk ke direktori proyek:**
+    ```bash
+    cd pomodoro_timer
+    ```
+3.  **Dapatkan dependensi:**
+    ```bash
+    flutter pub get
+    ```
+4.  **Jalankan aplikasi:**
+    ```bash
+    flutter run
+    ```
+    Untuk macOS:
+    ```bash
+    flutter run -d macos
+    ```
+
+## Struktur Proyek
+
+```
+pomodoro_timer/
+├── lib/
+│   ├── database_helper.dart       # Mengelola interaksi dengan database SQLite
+│   ├── main.dart                  # Logika utama aplikasi dan UI Pomodoro Timer
+│   ├── notification_service.dart  # Mengelola notifikasi lokal
+│   ├── session_history_screen.dart# Layar untuk menampilkan riwayat sesi
+│   ├── settings_screen.dart       # Layar untuk pengaturan aplikasi
+│   └── system_tray_manager.dart   # Mengelola integrasi dengan system tray (khusus desktop)
+├── assets/
+│   └── icon.png                   # Aset ikon aplikasi
+├── macos/                         # Konfigurasi khusus macOS
+├── pubspec.yaml                   # Definisi proyek dan dependensi
+├── README.md                      # Berkas ini
+└── ...
+```
+
+## Kontribusi
+
+Kontribusi sangat dihargai! Jika Anda memiliki saran atau menemukan bug, silakan buka issue atau kirim pull request.
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah Lisensi MIT. Lihat berkas `LICENSE` untuk detail lebih lanjut.
