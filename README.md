@@ -5,14 +5,16 @@ Aplikasi Pomodoro Timer sederhana yang dibangun dengan Flutter. Aplikasi ini mem
 ## Fitur
 
 *   **Timer Pomodoro:** Atur durasi kerja dan istirahat.
+*   **Manajemen Tugas Multi-Sesi:** Tentukan dan kelola beberapa tugas dalam satu sesi Pomodoro, dengan durasi yang dapat disesuaikan per tugas.
+*   **Jeda Cepat (Quick Break):** Fitur jeda singkat yang dapat dikonfigurasi, memungkinkan jeda tanpa mengganggu sesi kerja utama. Sesi kerja akan dilanjutkan secara otomatis setelah jeda cepat berakhir.
 *   **Notifikasi:** Dapatkan notifikasi saat sesi kerja atau istirahat berakhir.
 *   **Manajemen Sesi:** Catat riwayat sesi Pomodoro Anda.
-*   **Manajemen Riwayat:**
-    *   Lihat riwayat sesi yang telah selesai.
+*   **Manajemen Riwayat yang Ditingkatkan:**
+    *   Lihat riwayat sesi yang telah selesai, termasuk detail tugas individu, durasi aktual, dan status.
     *   Hapus sesi individu dari riwayat.
     *   Hapus semua riwayat sesi.
 *   **Dukungan Tema:** Mendukung tema terang dan gelap.
-*   **Input Tugas:** Catat jenis pekerjaan dan area fokus untuk setiap sesi.
+*   **Penyempurnaan UI/UX:** Logika tampilan tombol telah disempurnakan untuk pengalaman pengguna yang lebih intuitif, termasuk menyembunyikan tombol 'Stop' selama jeda cepat.
 
 ## Instalasi
 
