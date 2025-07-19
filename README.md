@@ -1,5 +1,7 @@
 # Pomodoro+
 
+**Pomodoro+ : Atur ritmemu, nikmati fokusmu.**
+
 Aplikasi Pomodoro+ adalah evolusi dari Pomodoro Timer tradisional, dibangun dengan Flutter. Aplikasi ini membantu Anda mengelola waktu kerja dan istirahat menggunakan teknik Pomodoro yang disempurnakan.
 
 ## Filosofi Penamaan: Pomodoro+
