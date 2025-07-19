@@ -9,10 +9,10 @@ Aplikasi Pomodoro+ adalah evolusi dari Pomodoro Timer tradisional, dibangun deng
 Nama "Pomodoro+" dipilih untuk merefleksikan esensi aplikasi ini sebagai pengembangan dan peningkatan dari teknik Pomodoro klasik. Tanda "+" (plus) melambangkan:
 
 *   **Penambahan Fitur:** Aplikasi ini memperkenalkan fungsionalitas baru seperti manajemen tugas multi-sesi dan jeda cepat (quick break), yang memperkaya pengalaman Pomodoro tradisional.
-*   **Penyempurnaan:** Kami telah menyempurnakan aspek-aspek inti Pomodoro, seperti pelacakan riwayat yang lebih detail dan fleksibilitas dalam pengaturan, untuk memenuhi kebutuhan pengguna modern.
+*   **Penyempurnaan:** Menyempurnakan aspek-aspek inti Pomodoro, seperti pelacakan riwayat yang lebih detail dan fleksibilitas dalam pengaturan, untuk memenuhi kebutuhan pengguna modern.
 *   **Evolusi:** "Pomodoro+" menandakan bahwa ini bukan sekadar replika, melainkan langkah maju dalam adaptasi teknik Pomodoro agar lebih relevan dan efisien di lingkungan kerja saat ini.
 
-Dengan "Pomodoro+", kami bertujuan untuk memberikan alat yang lebih komprehensif dan adaptif bagi siapa saja yang ingin meningkatkan fokus dan produktivitas mereka, sambil tetap menghormati prinsip dasar Pomodoro.
+Pomodoro+ bertujuan untuk memberikan alat yang lebih komprehensif dan adaptif bagi siapa saja yang ingin meningkatkan fokus dan produktivitas mereka, sambil tetap menghormati prinsip dasar Pomodoro.
 
 ## Fitur
 
