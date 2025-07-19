@@ -37,8 +37,8 @@ class _SessionHistoryScreenState extends State<SessionHistoryScreen> {
       if (session['status'] == 'Completed') {
         final DateTime startTime = DateTime.fromMillisecondsSinceEpoch(session['startTime']);
         final String dateKey = DateFormat('yyyy-MM-dd').format(startTime);
-        dailyData.update(dateKey, (value) => value + (session['durationSeconds'] / 60), // in minutes
-            ifAbsent: () => (session['durationSeconds'] / 60));
+        dailyData.update(dateKey, (value) => value + (session['totalWorkDurationSeconds'] / 60), // in minutes
+            ifAbsent: () => (session['totalWorkDurationSeconds'] / 60));
       }
     }
     return dailyData;
@@ -191,59 +191,62 @@ class _SessionHistoryScreenState extends State<SessionHistoryScreen> {
                             itemCount: _groupedSessions[dateKey]!.length,
                             itemBuilder: (context, index) {
                               final session = _groupedSessions[dateKey]![index];
-                              return Card(
-                                color: Colors.blueGrey[800],
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row( // Added Row for delete button
-                                    children: [
-                                      Expanded( // Wrap existing Column with Expanded
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Jenis Pekerjaan: ${session['taskType']}',
-                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Area Fokus: ${session['focusArea']}',
-                                              style: const TextStyle(fontSize: 14, color: Colors.white70),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Durasi: ${_formatDuration(session['durationSeconds'])}',
-                                              style: const TextStyle(fontSize: 14, color: Colors.white70),
-                                            ),
-                                            Text(
-                                              'Mulai: ${_formatDateTime(session['startTime'])}',
-                                              style: const TextStyle(fontSize: 14, color: Colors.white70),
-                                            ),
-                                            Text(
-                                              'Selesai: ${_formatDateTime(session['endTime'])}',
-                                              style: const TextStyle(fontSize: 14, color: Colors.white70),
-                                            ),
-                                            Text(
-                                              'Status: ${session['status']}',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: session['status'] == 'Completed' ? Colors.greenAccent : Colors.redAccent,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                              return FutureBuilder<List<Map<String, dynamic>>>(
+                                future: _dbHelper.getTasksForSession(session['id']),
+                                builder: (context, snapshot) {
+                                  List<Map<String, dynamic>> tasks = snapshot.data ?? [];
+                                  return Card(
+                                    color: Colors.blueGrey[800],
+                                    elevation: 4,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    child: ExpansionTile(
+                                      title: Text(
+                                        'Sesi Pomodoro: ${_formatDate(dateKey)} - ${_formatDateTime(session['startTime'])}',
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
                                       ),
-                                      IconButton( // Delete button
+                                      subtitle: Text(
+                                        'Total Durasi Kerja: ${_formatDuration(session['totalWorkDurationSeconds'])}',
+                                        style: const TextStyle(fontSize: 14, color: Colors.white70),
+                                      ),
+                                      trailing: IconButton(
                                         icon: const Icon(Icons.delete, color: Colors.redAccent),
                                         onPressed: () => _deleteSession(session['id']),
                                         tooltip: 'Hapus Sesi Ini',
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                      children: tasks.map((task) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '  Tugas: ${task['taskType']}',
+                                                style: const TextStyle(fontSize: 14, color: Colors.white),
+                                              ),
+                                              Text(
+                                                '  Durasi Alokasi: ${_formatDuration(task['taskDurationSeconds'])}',
+                                                style: const TextStyle(fontSize: 12, color: Colors.white70),
+                                              ),
+                                              Text(
+                                                '  Durasi Aktual: ${_formatDuration(task['actualDurationSeconds'])}',
+                                                style: const TextStyle(fontSize: 12, color: Colors.white70),
+                                              ),
+                                              Text(
+                                                '  Status Tugas: ${task['taskStatus']}',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: task['taskStatus'] == 'Completed' ? Colors.greenAccent : Colors.redAccent,
+                                                ),
+                                              ),
+                                              const Divider(color: Colors.white12),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  );
+                                },
                               );
                             },
                           ),

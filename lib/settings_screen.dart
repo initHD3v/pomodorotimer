@@ -19,6 +19,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _pomodoroController;
   late TextEditingController _shortBreakController;
   late TextEditingController _longBreakController;
+  late TextEditingController _quickBreakController; // New controller for quick break duration
   ThemeMode _selectedThemeMode = ThemeMode.system;
   late String _selectedWorkSound;
   late String _selectedBreakSound;
@@ -29,6 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _pomodoroController = TextEditingController();
     _shortBreakController = TextEditingController();
     _longBreakController = TextEditingController();
+    _quickBreakController = TextEditingController(); // Initialize new controller
 
     // Initialize with a safe default, or the first available sound if the list is not empty
     _selectedWorkSound = widget.availableSounds.isNotEmpty ? widget.availableSounds.first : 'alarm1.mp3';
@@ -43,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _pomodoroController.text = (_prefs.getInt('pomodoroDuration') ?? 25).toString();
       _shortBreakController.text = (_prefs.getInt('shortBreakDuration') ?? 5).toString();
       _longBreakController.text = (_prefs.getInt('longBreakDuration') ?? 15).toString();
+      _quickBreakController.text = (_prefs.getInt('quickBreakDuration') ?? 1).toString(); // Load quick break duration
       _selectedThemeMode = ThemeMode.values[_prefs.getInt('themeMode') ?? 0];
       _selectedWorkSound = _prefs.getString('workSound') ?? widget.availableSounds.first;
       _selectedBreakSound = _prefs.getString('breakSound') ?? widget.availableSounds.first;
@@ -54,6 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await _prefs.setInt('pomodoroDuration', int.parse(_pomodoroController.text));
       await _prefs.setInt('shortBreakDuration', int.parse(_shortBreakController.text));
       await _prefs.setInt('longBreakDuration', int.parse(_longBreakController.text));
+      await _prefs.setInt('quickBreakDuration', int.parse(_quickBreakController.text)); // Save quick break duration
       await _prefs.setInt('themeMode', _selectedThemeMode.index);
       await _prefs.setString('workSound', _selectedWorkSound);
       await _prefs.setString('breakSound', _selectedBreakSound);
@@ -70,6 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _pomodoroController.dispose();
     _shortBreakController.dispose();
     _longBreakController.dispose();
+    _quickBreakController.dispose(); // Dispose new controller
     super.dispose();
   }
 
@@ -143,6 +148,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   controller: _longBreakController,
                   decoration: InputDecoration(
                     labelText: 'Istirahat Panjang (menit)',
+                    labelStyle: TextStyle(color: Colors.white70),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Harap masukkan durasi';
+                    }
+                    if (int.tryParse(value) == null) {
+                      return 'Harap masukkan angka yang valid';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _quickBreakController,
+                  decoration: InputDecoration(
+                    labelText: 'Jeda Cepat (menit)',
                     labelStyle: TextStyle(color: Colors.white70),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
