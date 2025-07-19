@@ -1,6 +1,16 @@
-# Pomodoro Timer
+# Pomodoro+
 
-Aplikasi Pomodoro Timer sederhana yang dibangun dengan Flutter. Aplikasi ini membantu Anda mengelola waktu kerja dan istirahat menggunakan teknik Pomodoro.
+Aplikasi Pomodoro+ adalah evolusi dari Pomodoro Timer tradisional, dibangun dengan Flutter. Aplikasi ini membantu Anda mengelola waktu kerja dan istirahat menggunakan teknik Pomodoro yang disempurnakan.
+
+## Filosofi Penamaan: Pomodoro+
+
+Nama "Pomodoro+" dipilih untuk merefleksikan esensi aplikasi ini sebagai pengembangan dan peningkatan dari teknik Pomodoro klasik. Tanda "+" (plus) melambangkan:
+
+*   **Penambahan Fitur:** Aplikasi ini memperkenalkan fungsionalitas baru seperti manajemen tugas multi-sesi dan jeda cepat (quick break), yang memperkaya pengalaman Pomodoro tradisional.
+*   **Penyempurnaan:** Kami telah menyempurnakan aspek-aspek inti Pomodoro, seperti pelacakan riwayat yang lebih detail dan fleksibilitas dalam pengaturan, untuk memenuhi kebutuhan pengguna modern.
+*   **Evolusi:** "Pomodoro+" menandakan bahwa ini bukan sekadar replika, melainkan langkah maju dalam adaptasi teknik Pomodoro agar lebih relevan dan efisien di lingkungan kerja saat ini.
+
+Dengan "Pomodoro+", kami bertujuan untuk memberikan alat yang lebih komprehensif dan adaptif bagi siapa saja yang ingin meningkatkan fokus dan produktivitas mereka, sambil tetap menghormati prinsip dasar Pomodoro.
 
 ## Fitur
 
@@ -26,7 +36,7 @@ Untuk menjalankan aplikasi ini, pastikan Anda telah menginstal Flutter SDK.
     ```
 2.  **Masuk ke direktori proyek:**
     ```bash
-    cd pomodoro_timer
+    cd pomodoro_plus
     ```
 3.  **Dapatkan dependensi:**
     ```bash
@@ -44,7 +54,7 @@ Untuk menjalankan aplikasi ini, pastikan Anda telah menginstal Flutter SDK.
 ## Struktur Proyek
 
 ```
-pomodoro_timer/
+pomodoro_plus/
 ├── lib/
 │   ├── database_helper.dart       # Mengelola interaksi dengan database SQLite
 │   ├── main.dart                  # Logika utama aplikasi dan UI Pomodoro Timer
