@@ -1,34 +1,48 @@
-# Pomodoro+
+# ⏱️ Pomodoro+
 
-**Pomodoro+ : Atur ritmemu, nikmati fokusmu.**
+**Atur ritmemu, nikmati fokusmu.**  
+Pomodoro+ adalah evolusi dari Pomodoro Timer tradisional, dibangun menggunakan [Flutter](https://flutter.dev) untuk platform desktop macOS (chip ARM). Dirancang untuk meningkatkan produktivitas dan menjaga keseimbangan antara kerja dan istirahat.
 
-Aplikasi Pomodoro+ adalah evolusi dari Pomodoro Timer tradisional, dibangun dengan Flutter. Aplikasi ini membantu Anda mengelola waktu kerja dan istirahat menggunakan teknik Pomodoro yang disempurnakan.
+---
 
-## Filosofi Penamaan: Pomodoro+
+## 🌟 Fitur Utama
 
-Nama "Pomodoro+" dipilih untuk merefleksikan esensi aplikasi ini sebagai pengembangan dan peningkatan dari teknik Pomodoro klasik. Tanda "+" (plus) melambangkan:
+- 🔔 **Timer Pomodoro** – Atur durasi kerja dan istirahat sesuai kebutuhan.
+- 🧠 **Manajemen Tugas Multi-Sesi** – Kelola beberapa tugas dalam satu sesi Pomodoro.
+- ☕ **Jeda Cepat (Quick Break)** – Ambil jeda singkat tanpa mengganggu sesi kerja utama.
+- 📌 **Notifikasi** – Notifikasi otomatis saat waktu kerja atau istirahat berakhir.
+- 📈 **Manajemen Riwayat Sesi** – Lihat dan kelola riwayat sesi secara detail.
+- 🎨 **Dukungan Tema** – Mode terang dan gelap untuk kenyamanan visual.
+- 💡 **UX yang Disempurnakan** – Tampilan tombol dinamis dan intuitif.
 
-*   **Penambahan Fitur:** Aplikasi ini memperkenalkan fungsionalitas baru seperti manajemen tugas multi-sesi dan jeda cepat (quick break), yang memperkaya pengalaman Pomodoro tradisional.
-*   **Penyempurnaan:** Menyempurnakan aspek-aspek inti Pomodoro, seperti pelacakan riwayat yang lebih detail dan fleksibilitas dalam pengaturan, untuk memenuhi kebutuhan pengguna modern.
-*   **Evolusi:** "Pomodoro+" menandakan bahwa ini bukan sekadar replika, melainkan langkah maju dalam adaptasi teknik Pomodoro agar lebih relevan dan efisien di lingkungan kerja saat ini.
+---
 
-Pomodoro+ bertujuan untuk memberikan alat yang lebih komprehensif dan adaptif bagi siapa saja yang ingin meningkatkan fokus dan produktivitas mereka, sambil tetap menghormati prinsip dasar Pomodoro.
+## 🔍 Filosofi Penamaan
 
-## Fitur
+Nama **Pomodoro+** mencerminkan:
+- **➕ Penambahan fitur baru**
+- **✨ Penyempurnaan dari metode klasik**
+- **🚀 Evolusi metode manajemen waktu**
 
-*   **Timer Pomodoro:** Atur durasi kerja dan istirahat.
-*   **Manajemen Tugas Multi-Sesi:** Tentukan dan kelola beberapa tugas dalam satu sesi Pomodoro, dengan durasi yang dapat disesuaikan per tugas.
-*   **Jeda Cepat (Quick Break):** Fitur jeda singkat yang dapat dikonfigurasi, memungkinkan jeda tanpa mengganggu sesi kerja utama. Sesi kerja akan dilanjutkan secara otomatis setelah jeda cepat berakhir.
-*   **Notifikasi:** Dapatkan notifikasi saat sesi kerja atau istirahat berakhir.
-*   **Manajemen Sesi:** Catat riwayat sesi Pomodoro Anda.
-*   **Manajemen Riwayat yang Ditingkatkan:**
-    *   Lihat riwayat sesi yang telah selesai, termasuk detail tugas individu, durasi aktual, dan status.
-    *   Hapus sesi individu dari riwayat.
-    *   Hapus semua riwayat sesi.
-*   **Dukungan Tema:** Mendukung tema terang dan gelap.
-*   **Penyempurnaan UI/UX:** Logika tampilan tombol telah disempurnakan untuk pengalaman pengguna yang lebih intuitif, termasuk menyembunyikan tombol 'Stop' selama jeda cepat.
+Pomodoro+ bukan hanya alat bantu, tapi rekan kerja untuk produktivitas modern.
 
-## Instalasi
+---
+
+## 📸 Tampilan Aplikasi
+
+> *Tambahkan screenshot atau screen recording di sini untuk menarik perhatian pengguna.*
+
+---
+
+## 💻 Teknologi
+
+- Flutter 3.x
+- Dart
+- macOS (Apple Silicon support)
+
+---
+
+## 🚀 Instalasi
 
 Untuk menjalankan aplikasi ini, pastikan Anda telah menginstal Flutter SDK.
 
